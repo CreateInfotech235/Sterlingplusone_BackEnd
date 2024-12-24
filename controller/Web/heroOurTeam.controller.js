@@ -3,14 +3,14 @@ const HeroOurTeam = require("../../models/heroOurTeam.schema");
 // Create a new HeroOurTeam
 exports.createHeroOurTeam = async (req, res) => {
   try {
-    const { maintitle, teamMember } = req.body;
+  const data =req.body
 
-    if (!maintitle || !teamMember) {
+    if (!heroOurTeam.maintitle || !heroOurTeam.teamMember) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
     // Check if a HeroOurTeam already exists
-    const existingHeroOurTeam = await HeroOurTeam.findOne();
+    const existingHeroOurTeam = await HeroOurTeam.findOne({});
 
     if (existingHeroOurTeam) {
       // Update existing HeroOurTeam instead of creating new one

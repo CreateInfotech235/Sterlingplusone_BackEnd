@@ -9,15 +9,11 @@ const aboutAs = new Schema({
   title: {
     type: String,
     required: true,
-  },
-  subTitle: {
+  },   
+  description: [{
     type: String,
     required: true,
-  },    
-  description: {
-    type: String,
-    required: true,
-  },
+  }],
   button: {
     name: {
       type: String,

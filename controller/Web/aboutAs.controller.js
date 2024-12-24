@@ -5,7 +5,7 @@ exports.createAboutAs = async (req, res) => {
   try {
     const { aboutAs } = req.body;
 
-    if (!aboutAs || !aboutAs.mainTitle || !aboutAs.title || !aboutAs.description || !aboutAs.button || !aboutAs.image) {
+    if (!aboutAs || !aboutAs.mainTitle || !aboutAs.title || !aboutAs.description || !aboutAs.button || !aboutAs.contectNumber || !aboutAs.achievements || !aboutAs.image || !aboutAs.infoTitle || !aboutAs.infoDescription || !aboutAs.services) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
@@ -57,6 +57,11 @@ exports.getAboutAsById = async (req, res) => {
 exports.updateAboutAs = async (req, res) => {
   try {
     const { aboutAs } = req.body;
+
+    if (!aboutAs || !aboutAs.mainTitle || !aboutAs.title || !aboutAs.description || !aboutAs.button || !aboutAs.contectNumber || !aboutAs.achievements || !aboutAs.image || !aboutAs.infoTitle || !aboutAs.infoDescription || !aboutAs.services) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
     const updatedAboutAs = await AboutAs.findByIdAndUpdate(
       req.params.id,
       { aboutAs },

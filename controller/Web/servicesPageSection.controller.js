@@ -5,16 +5,22 @@ exports.createServicesPageSection = async (req, res) => {
   try {
     const { servicesPageSection } = req.body;
 
-    if (
-      !servicesPageSection ||
-      !servicesPageSection.img ||
-      !servicesPageSection.title ||
-      !servicesPageSection.description ||
-      !servicesPageSection.button ||
-      !servicesPageSection.button.name ||
-      !servicesPageSection.button.link
-    ) {
+    if (!servicesPageSection || !servicesPageSection.services || !servicesPageSection.services.length) {
       return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    // Validate each service in the array
+    for (const service of servicesPageSection.services) {
+      if (
+        !service.img ||
+        !service.title ||
+        !service.description ||
+        !service.button ||
+        !service.button.name ||
+        !service.button.link
+      ) {
+        return res.status(400).json({ message: "Missing required fields in service" });
+      }
     }
 
     // Check if a Services Page Section already exists
@@ -71,6 +77,26 @@ exports.getServicesPageSectionById = async (req, res) => {
 exports.updateServicesPageSection = async (req, res) => {
   try {
     const { servicesPageSection } = req.body;
+
+    // Validate the services array
+    if (!servicesPageSection || !servicesPageSection.services || !servicesPageSection.services.length) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    // Validate each service in the array
+    for (const service of servicesPageSection.services) {
+      if (
+        !service.img ||
+        !service.title ||
+        !service.description ||
+        !service.button ||
+        !service.button.name ||
+        !service.button.link
+      ) {
+        return res.status(400).json({ message: "Missing required fields in service" });
+      }
+    }
+
     const updatedServicesPageSection = await ServicesPageSection.findByIdAndUpdate(
       req.params.id,
       { servicesPageSection },

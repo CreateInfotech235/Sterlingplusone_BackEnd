@@ -16,10 +16,13 @@ const blogPageSectionController = require("../../controller/Web/blogPageSection.
 const contectUsController = require("../../controller/Web/contectUs.controller");
 const aboutAsController = require("../../controller/Web/aboutAs.controller");
 const footerController = require("../../controller/Web/footer.controller");
+const contactPageController = require("../../controller/Web/contectuspage.controller");
+const allBlogController = require("../../controller/Web/allblogcontroller");
+
 /* GET home page. */
 router.get("/", function (req, res, next) {
   res.render("index", { title: "Express Admin" });
-});
+}); 
 
 
 // Create a new hero section
@@ -107,6 +110,9 @@ router.put("/heroplan/:id", heroPlansController.updateHeroPlans);
 router.delete("/heroplan/:id", heroPlansController.deleteHeroPlans);
 
 
+
+
+
 // Create a new hero choose us
 router.post("/herochooseus", heroChooseUsController.createHeroChooseUs);
 
@@ -123,6 +129,8 @@ router.put("/herochooseus/:id", heroChooseUsController.updateHeroChooseUs);
 router.delete("/herochooseus/:id", heroChooseUsController.deleteHeroChooseUs);
 
 
+
+
 // Create a new hero our team
 router.post("/heroourteam", heroOurTeamController.createHeroOurTeam);
 
@@ -137,6 +145,9 @@ router.put("/heroourteam/:id", heroOurTeamController.updateHeroOurTeam);
 
 // Delete a hero our team by ID
 router.delete("/heroourteam/:id", heroOurTeamController.deleteHeroOurTeam);
+
+
+
 
 
 // Create a new services page
@@ -261,6 +272,37 @@ router.put("/footer/:id", footerController.updateFooterById);
 // Delete a footer by ID
 router.delete("/footer/:id", footerController.deleteFooterById);
 
+
+// Create contact page
+router.post("/contactpage", contactPageController.createContactPage);
+
+// Get contact page
+router.get("/contactpage", contactPageController.getContactPage);
+
+// Update contact page
+router.put("/contactpage/:id", contactPageController.updateContactPage);
+
+// Delete contact page
+router.delete("/contactpage/:id", contactPageController.deleteContactPage);
+
+
+// Create a new all blog
+router.post("/allblog", allBlogController.createAllBlog);
+
+// Get all blogs 
+router.get("/allblogs", allBlogController.getAllBlogs);
+
+// Get an all blog by title or id
+router.get("/getBlogByQuery", allBlogController.getBlogByTitle);
+
+// Get default blog
+router.get("/defaultblog", allBlogController.getDefaultBlog);
+
+// Update an all blog by ID
+router.patch("/allblog/:id", allBlogController.updateAllBlog);
+
+// Delete an all blog by ID
+router.delete("/allblog/:id", allBlogController.deleteAllBlog);
 
 
 module.exports = router;
