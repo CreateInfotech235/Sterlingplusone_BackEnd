@@ -35,7 +35,7 @@ router.get("/heroes", heroController.getHeroSections);
 router.get("/hero/:id", heroController.getHeroSectionById);
 
 // Update a hero section by ID
-router.put("/hero/:id", heroController.updateHeroSection);
+// router.put("/hero/:id", heroController.updateHeroSection);
 
 // Delete a hero section by ID
 router.delete("/hero/:id", heroController.deleteHeroSection);
@@ -53,7 +53,7 @@ router.get("/navbars", navBarController.getNavBars);
 router.get("/navbar/:id", navBarController.getNavBarById);
 
 // Update a navbar by ID
-router.put("/navbar/:id", navBarController.updateNavBar);
+// router.put("/navbar/:id", navBarController.updateNavBar);
 
 // Delete a navbar by ID
 router.delete("/navbar/:id", navBarController.deleteNavBar);
@@ -70,7 +70,7 @@ router.get("/menus", menuController.getMenus);
 router.get("/menu/:id", menuController.getMenuById);
 
 // Update a menu by ID
-router.put("/menu/:id", menuController.updateMenu);
+// router.put("/menu/:id", menuController.updateMenu);
 
 // Delete a menu by ID
 router.delete("/menu/:id", menuController.deleteMenu);
@@ -87,7 +87,7 @@ router.get("/heroourservices", heroOurServicesController.getHeroOurServices);
 router.get("/heroourservices/:id", heroOurServicesController.getHeroOurServicesById);
 
 // Update a hero our services by ID
-router.put("/heroourservices/:id", heroOurServicesController.updateHeroOurServices);
+// router.put("/heroourservices/:id", heroOurServicesController.updateHeroOurServices);
 
 // Delete a hero our services by ID
 router.delete("/heroourservices/:id", heroOurServicesController.deleteHeroOurServices);
@@ -104,7 +104,7 @@ router.get("/heroplans", heroPlansController.getHeroPlans);
 router.get("/heroplan/:id", heroPlansController.getHeroPlansById);
 
 // Update a hero plan by ID
-router.put("/heroplan/:id", heroPlansController.updateHeroPlans);
+// router.put("/heroplan/:id", heroPlansController.updateHeroPlans);
 
 // Delete a hero plan by ID
 router.delete("/heroplan/:id", heroPlansController.deleteHeroPlans);
@@ -123,7 +123,7 @@ router.get("/herochooseus", heroChooseUsController.getHeroChooseUs);
 router.get("/herochooseus/:id", heroChooseUsController.getHeroChooseUsById);
 
 // Update a hero choose us by ID
-router.put("/herochooseus/:id", heroChooseUsController.updateHeroChooseUs);
+// router.put("/herochooseus/:id", heroChooseUsController.updateHeroChooseUs);
 
 // Delete a hero choose us by ID
 router.delete("/herochooseus/:id", heroChooseUsController.deleteHeroChooseUs);
@@ -141,7 +141,7 @@ router.get("/heroourteam", heroOurTeamController.getHeroOurTeams);
 router.get("/heroourteam/:id", heroOurTeamController.getHeroOurTeamById);
 
 // Update a hero our team by ID
-router.put("/heroourteam/:id", heroOurTeamController.updateHeroOurTeam);
+// router.put("/heroourteam/:id", heroOurTeamController.updateHeroOurTeam);
 
 // Delete a hero our team by ID
 router.delete("/heroourteam/:id", heroOurTeamController.deleteHeroOurTeam);
@@ -160,7 +160,7 @@ router.get("/servicespages", servicesPageController.getServicesPages);
 router.get("/servicespage/:id", servicesPageController.getServicesPageById);
 
 // Update a services page by ID
-router.put("/servicespage/:id", servicesPageController.updateServicesPage);
+// router.put("/servicespage/:id", servicesPageController.updateServicesPage);
 
 
 // Create a new blog page
@@ -173,7 +173,7 @@ router.get("/blogpages", blogPageController.getBlogPages);
 router.get("/blogpage/:id", blogPageController.getBlogPageById);
 
 // Update a blog page by ID
-router.put("/blogpage/:id", blogPageController.updateBlogPage);
+// router.put("/blogpage/:id", blogPageController.updateBlogPage);
 
 // Delete a blog page by ID
 router.delete("/blogpage/:id", blogPageController.deleteBlogPage);
@@ -190,7 +190,7 @@ router.get("/servicespagesections", servicesPageSectionController.getServicesPag
 router.get("/servicespagesection/:id", servicesPageSectionController.getServicesPageSectionById);
 
 // Update a services page section by ID
-router.put("/servicespagesection/:id", servicesPageSectionController.updateServicesPageSection);
+// router.put("/servicespagesection/:id", servicesPageSectionController.updateServicesPageSection);
 
 // Delete a services page section by ID
 router.delete("/servicespagesection/:id", servicesPageSectionController.deleteServicesPageSection);
@@ -206,7 +206,7 @@ router.get("/ourpartners", ourPartnerController.getOurPartnerSections);
 router.get("/ourpartner/:id", ourPartnerController.getOurPartnerSectionById);
 
 // Update a our partner by ID
-router.put("/ourpartner/:id", ourPartnerController.updateOurPartnerSection);
+// router.put("/ourpartner/:id", ourPartnerController.updateOurPartnerSection);
 
 // Delete a our partner by ID
 router.delete("/ourpartner/:id", ourPartnerController.deleteOurPartnerSection);
@@ -222,10 +222,14 @@ router.get("/blogpagesections", blogPageSectionController.getBlogPageSections);
 router.get("/blogpagesection/:id", blogPageSectionController.getBlogPageSectionById);
 
 // Update a blog page section by ID
-router.put("/blogpagesection/:id", blogPageSectionController.updateBlogPageSection);
+// router.put("/blogpagesection/:id", blogPageSectionController.updateBlogPageSection);
 
 // Delete a blog page section by ID
 router.delete("/blogpagesection/:id", blogPageSectionController.deleteBlogPageSection);
+
+
+
+
 
 
 // Create a new contect us
@@ -234,14 +238,13 @@ router.post("/contectus", contectUsController.createContectUs);
 // Get all contect us
 router.get("/contectus", contectUsController.getContectUs);
 
-// Get a contect us by ID
-router.get("/contectus/:id", contectUsController.getContectUsById);
-
-// Update a contect us by ID
-router.put("/contectus/:id", contectUsController.updateContectUs);
+router.post("/sendmessage", contectUsController.sendMessage);
 
 // Delete a contect us by ID
 router.delete("/contectus/:id", contectUsController.deleteContectUs);
+
+
+
 
 
 // Create a new about as
@@ -254,7 +257,7 @@ router.get("/aboutas", aboutAsController.getAboutAsSections);
 router.get("/aboutas/:id", aboutAsController.getAboutAsById);
 
 // Update a about as by ID
-router.put("/aboutas/:id", aboutAsController.updateAboutAs);
+// router.put("/aboutas/:id", aboutAsController.updateAboutAs);
 
 // Delete a about as by ID
 router.delete("/aboutas/:id", aboutAsController.deleteAboutAs);
@@ -267,7 +270,7 @@ router.post("/footer", footerController.createOrUpdateFooter);
 router.get("/footer", footerController.getFooter);  
 
 // Update a footer by ID
-router.put("/footer/:id", footerController.updateFooterById);
+// router.put("/footer/:id", footerController.updateFooterById);
 
 // Delete a footer by ID
 router.delete("/footer/:id", footerController.deleteFooterById);
@@ -280,7 +283,7 @@ router.post("/contactpage", contactPageController.createContactPage);
 router.get("/contactpage", contactPageController.getContactPage);
 
 // Update contact page
-router.put("/contactpage/:id", contactPageController.updateContactPage);
+//  router.put("/contactpage/:id", contactPageController.updateContactPage);
 
 // Delete contact page
 router.delete("/contactpage/:id", contactPageController.deleteContactPage);
@@ -306,3 +309,4 @@ router.delete("/allblog/:id", allBlogController.deleteAllBlog);
 
 
 module.exports = router;
+

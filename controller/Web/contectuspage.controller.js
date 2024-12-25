@@ -45,6 +45,7 @@ exports.getContactPage = async (req, res) => {
   }
 };
 
+
 // Update contact page
 exports.updateContactPage = async (req, res) => {
   try {
