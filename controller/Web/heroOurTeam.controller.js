@@ -4,8 +4,9 @@ const HeroOurTeam = require("../../models/heroOurTeam.schema");
 exports.createHeroOurTeam = async (req, res) => {
   try {
   const data =req.body
+  
 
-    if (!heroOurTeam.maintitle || !heroOurTeam.teamMember) {
+    if (!data.maintitle || !data.teamMember) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
@@ -18,8 +19,8 @@ exports.createHeroOurTeam = async (req, res) => {
         existingHeroOurTeam._id,
         { 
           heroOurTeam: {
-            maintitle,
-            teamMember
+            maintitle:data.maintitle,
+            teamMember:data.teamMember
           }
         },
         { new: true }
@@ -30,8 +31,8 @@ exports.createHeroOurTeam = async (req, res) => {
     // If no existing HeroOurTeam, create new one
     const heroOurTeam = new HeroOurTeam({
       heroOurTeam: {
-        maintitle,
-        teamMember
+        maintitle:data.maintitle,
+        teamMember:data.teamMember
       }
     });
 

@@ -10,16 +10,18 @@ const blogPage = new Schema({
     type: String,
     required: true,
   },
-  button: {
-    name: {
-      type: String,
-      required: true,
+  button: [
+    {
+      name: {
+        type: String,
+        required: true,
+      },
+      link: {
+        type: String,
+        required: true,
+      },
     },
-    link: {
-      type: String,
-      required: true,
-    },
-  },
+  ],
 });
 
 var blogPageSchema = new Schema({

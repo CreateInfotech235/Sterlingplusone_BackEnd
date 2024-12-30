@@ -3,22 +3,27 @@ var Schema = mongoose.Schema;
 
 var menuSchema = new Schema({
     logo: {
-        img : {
+        img: {
             type: String,
         },
-        path : {
+        path: {
             type: String,
-        }
+        },
     },
-    menuList : [
+    favicon: {
+        img: {
+            type: String,
+        },
+    },
+    menuList: [
         {
-            name:String,
-            path:String,
+            name: String,
+            path: String,
         }
     ],
-    button : {
-        text:String,
-        link:String 
+    button: {
+        text: String,
+        link: String
     }
 });
 

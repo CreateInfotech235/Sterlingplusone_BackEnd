@@ -5,30 +5,22 @@ exports.createOrUpdateFooter = async (req, res) => {
   try {
     const { footer } = req.body;
 
+    // Validate request payload
     if (!footer || !footer.section || !footer.socialMedia || !footer.copyright) {
-      return res.status(400).json({ message: "Missing required fields" });
+      return res.status(400).json({ message: "Missing required fields: 'section', 'socialMedia', or 'copyright'." });
     }
 
-    // Check if a Footer already exists
-    const existingFooter = await Footer.findOne();
+    // Upsert Footer
+    const updatedFooter = await Footer.findOneAndUpdate(
+      {},
+      { footer },
+      { new: true, upsert: true } // Upsert option creates a new document if none exists
+    );
 
-    if (existingFooter) {
-      // Update existing Footer
-      const updatedFooter = await Footer.findByIdAndUpdate(
-        existingFooter._id,
-        { footer },
-        { new: true }
-      );
-      return res.status(200).json(updatedFooter);
-    }
-
-    // Create new Footer if none exists
-    const footerData = new Footer({ footer });
-    const savedFooter = await footerData.save();
-    res.status(201).json(savedFooter);
+    res.status(200).json({ message: "Footer created or updated successfully", footer: updatedFooter });
   } catch (error) {
-    console.error("Error:", error);
-    res.status(400).json({ message: error.message });
+    console.error("Error in createOrUpdateFooter:", error);
+    res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
 
@@ -36,10 +28,13 @@ exports.createOrUpdateFooter = async (req, res) => {
 exports.getFooter = async (req, res) => {
   try {
     const footer = await Footer.findOne();
-    if (!footer) return res.status(404).json({ message: "Footer not found" });
+    if (!footer) {
+      return res.status(404).json({ message: "Footer not found" });
+    }
     res.status(200).json(footer);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error("Error in getFooter:", error);
+    res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
 
@@ -47,15 +42,25 @@ exports.getFooter = async (req, res) => {
 exports.updateFooterById = async (req, res) => {
   try {
     const { footer } = req.body;
+
+    if (!footer) {
+      return res.status(400).json({ message: "Missing footer data in the request body." });
+    }
+
     const updatedFooter = await Footer.findByIdAndUpdate(
       req.params.id,
       { footer },
       { new: true }
     );
-    if (!updatedFooter) return res.status(404).json({ message: "Footer not found" });
-    res.status(200).json(updatedFooter);
+
+    if (!updatedFooter) {
+      return res.status(404).json({ message: "Footer not found" });
+    }
+
+    res.status(200).json({ message: "Footer updated successfully", footer: updatedFooter });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error("Error in updateFooterById:", error);
+    res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
 
@@ -63,9 +68,25 @@ exports.updateFooterById = async (req, res) => {
 exports.deleteFooterById = async (req, res) => {
   try {
     const deletedFooter = await Footer.findByIdAndDelete(req.params.id);
-    if (!deletedFooter) return res.status(404).json({ message: "Footer not found" });
+
+    if (!deletedFooter) {
+      return res.status(404).json({ message: "Footer not found" });
+    }
+
     res.status(200).json({ message: "Footer deleted successfully" });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error("Error in deleteFooterById:", error);
+    res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+};
+
+// Delete All Footers (Optional - if needed)
+exports.deleteAllFooters = async (req, res) => {
+  try {
+    const result = await Footer.deleteMany({});
+    res.status(200).json({ message: `${result.deletedCount} footers deleted successfully.` });
+  } catch (error) {
+    console.error("Error in deleteAllFooters:", error);
+    res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };

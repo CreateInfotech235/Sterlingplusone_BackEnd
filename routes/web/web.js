@@ -18,11 +18,11 @@ const aboutAsController = require("../../controller/Web/aboutAs.controller");
 const footerController = require("../../controller/Web/footer.controller");
 const contactPageController = require("../../controller/Web/contectuspage.controller");
 const allBlogController = require("../../controller/Web/allblogcontroller");
-
+const blogPageSideController = require("../../controller/Web/blogPageSideSectionSchema.controller");
 /* GET home page. */
 router.get("/", function (req, res, next) {
   res.render("index", { title: "Express Admin" });
-}); 
+});
 
 
 // Create a new hero section
@@ -231,6 +231,11 @@ router.delete("/blogpagesection/:id", blogPageSectionController.deleteBlogPageSe
 
 
 
+router.post("/blogpagesideSection", blogPageSectionController.createBlogPageSection);
+
+router.get("/blogpagesideSection", blogPageSectionController.getBlogPageSections);
+
+
 
 // Create a new contect us
 router.post("/contectus", contectUsController.createContectUs);
@@ -267,7 +272,7 @@ router.delete("/aboutas/:id", aboutAsController.deleteAboutAs);
 router.post("/footer", footerController.createOrUpdateFooter);
 
 // Get all footer
-router.get("/footer", footerController.getFooter);  
+router.get("/footer", footerController.getFooter);
 
 // Update a footer by ID
 // router.put("/footer/:id", footerController.updateFooterById);
@@ -306,7 +311,6 @@ router.patch("/allblog/:id", allBlogController.updateAllBlog);
 
 // Delete an all blog by ID
 router.delete("/allblog/:id", allBlogController.deleteAllBlog);
-
 
 module.exports = router;
 

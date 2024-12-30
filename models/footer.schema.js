@@ -4,41 +4,45 @@ var Schema = mongoose.Schema;
 const footer = new Schema({
   section: [
     {
-      title : {
+      title: {
         type: String,
         required: true,
       },
-      button : [
+      list: [
         {
-            name : {
-                type: String,
-                required: true,
-            },
-            link : {
-                type: String,
-                required: true,
-            }
+          name: {
+            type: String,
+            required: true,
+          },
+          isbtn: {
+            type: Boolean,
+            default: true,
+          },
+          link: {
+            type: String,
+            required: false
+          }
         }
       ]
     },
   ],
-  socialMedia : [
+  socialMedia: [
     {
-        name : {
-            type: String,
-            required: true,
-        },
-        icon : {
-            type: String,
-            required: true,
-        },
-        link : {
-            type: String,
-            required: true,
-        }
+      name: {
+        type: String,
+        required: true,
+      },
+      icon: {
+        type: String,
+        required: true,
+      },
+      link: {
+        type: String,
+        required: true,
+      }
     }
   ],
-  copyright : {
+  copyright: {
     type: String,
     required: true,
   }
