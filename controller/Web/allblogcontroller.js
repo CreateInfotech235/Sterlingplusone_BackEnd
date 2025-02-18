@@ -11,6 +11,11 @@ exports.createAllBlog = async (req, res) => {
             return res.status(400).json({ message: "Missing required fields" });
         }
 
+        const isShow = allBlogData.isShow;
+        if (isShow) {
+            await Allblog.updateMany({ 'Allblog.isShow': true }, { 'Allblog.isShow': false });
+        }
+
 
 
         // If no existing All Blog, create new one
@@ -39,10 +44,12 @@ exports.getAllBlogs = async (req, res) => {
 exports.getBlogByTitle = async (req, res) => {
     try {
         const { id, title } = req.query;
-
+        console.log("id", id);
+        console.log("title", title);
         let allBlog;
         if (id) {
             allBlog = await Allblog.findById(id);
+            console.log("allBlog", allBlog);
         } else if (title) {
             // First try exact match with word boundaries
             allBlog = await Allblog.findOne({

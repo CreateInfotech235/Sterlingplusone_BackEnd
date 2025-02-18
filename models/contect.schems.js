@@ -10,6 +10,9 @@ const contactPage = new Schema({
     type: String,
     required: true,
   },
+  bgImage: {
+    type: String,
+  },
   button: {
     name: {
       type: String,

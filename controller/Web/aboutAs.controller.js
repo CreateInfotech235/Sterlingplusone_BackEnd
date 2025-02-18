@@ -1,5 +1,5 @@
 const AboutAs = require('../../models/aboutAs.schema');
-
+const AbouttopAs = require('../../models/abouttopAs.schema');
 // Create a new About Us section
 exports.createAboutAs = async (req, res) => {
   try {
@@ -80,6 +80,63 @@ exports.deleteAboutAs = async (req, res) => {
     const deletedAboutAs = await AboutAs.findByIdAndDelete(req.params.id);
     if (!deletedAboutAs) return res.status(404).json({ message: "About Us section not found" });
     res.status(200).json({ message: "About Us section deleted successfully" });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+
+exports.createAbouttopAs = async (req, res) => {
+  try {
+    const { abouttopAs } = req.body;
+    console.log(abouttopAs,"abouttopAs");
+
+    if (
+      !abouttopAs ||
+      !abouttopAs.title ||
+      !abouttopAs.bgImage ||
+      !abouttopAs.subTitle ||
+      !abouttopAs.button ||
+      !abouttopAs.button.name ||
+      !abouttopAs.button.link
+    ) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    // Check if a Services Page section already exists
+    const existingAbouttopAs = await AbouttopAs.findOne();
+
+    if (existingAbouttopAs) {
+      console.log(existingAbouttopAs);
+      // Update existing Services Page instead of creating new one
+      const updatedAbouttopAs = await AbouttopAs.findByIdAndUpdate(
+        existingAbouttopAs._id,
+        { abouttopAs },
+        { new: true }
+      );
+      return res.status(200).json(updatedAbouttopAs);
+    }
+
+    // If no existing Services Page, create new one
+    const abouttopAsData = new AbouttopAs({
+      abouttopAs: abouttopAs,
+    });
+
+    const savedAbouttopAs = await abouttopAsData.save();
+    console.log(savedAbouttopAs,"savedAbouttopAs");
+    res.status(201).json(savedAbouttopAs);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(400).json({ message: error.message });
+  }
+};
+
+// Get all Services Page sections
+exports.getAbouttopAs = async (req, res) => {
+  try {
+    const abouttopAs = await AbouttopAs.findOne();
+    console.log(abouttopAs,"abouttopAs");
+    res.status(200).json(abouttopAs);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

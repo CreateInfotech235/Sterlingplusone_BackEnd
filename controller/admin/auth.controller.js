@@ -89,7 +89,6 @@ exports.loginAdmin = async (req, res) => {
 };
 
 
-
 // update admin
 exports.updateAdmin = async (req, res) => {
   try {
@@ -101,26 +100,29 @@ exports.updateAdmin = async (req, res) => {
       return res.status(404).json({ status: "Failed", message: "Admin not found" });
     }
 
-    // Compare the old password with the existing password
-    const isPasswordValid = await bcrypt.compare(oldPassword, existingAdmin.password);
-    if (!isPasswordValid) {
-      return res.status(401).json({ status: "Failed", message: "Invalid old password" });
+    // If both password and oldPassword are provided, validate and update password
+    if (password && oldPassword) {
+      const isPasswordValid = await bcrypt.compare(oldPassword, existingAdmin.password);
+      if (!isPasswordValid) {
+        return res.status(401).json({ status: "Failed", message: "Invalid old password" });
+      }
+      
+      // Hash the new password
+      const hashedPassword = await bcrypt.hash(password, 10);
+      
+      // Update admin with new password
+      const admin = await Admin.findOneAndUpdate(
+        {},
+        { name, email, password: hashedPassword },
+        { new: true }
+      );
+      return res.status(200).json({ status: "Success", message: "Admin Updated Successfully", admin });
     }
 
-    // Hash the new password if provided
-    let hashedPassword;
-    if (password) {
-      hashedPassword = await bcrypt.hash(password, 10);
-    }
-
-    // Update admin with new password if provided, otherwise keep existing password
+    // If no password update requested, just update name and email
     const admin = await Admin.findOneAndUpdate(
       {},
-      { 
-        name,
-        email,
-        password: hashedPassword || existingAdmin.password
-      },
+      { name, email },
       { new: true }
     );
 

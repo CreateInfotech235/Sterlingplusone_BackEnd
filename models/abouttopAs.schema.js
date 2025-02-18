@@ -1,7 +1,7 @@
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 
-const heroSection = new Schema({
+const abouttopAs = new Schema({
   title: {
     type: String,
     required: true,
@@ -10,9 +10,8 @@ const heroSection = new Schema({
     type: String,
     required: true,
   },
-  description: {
+  bgImage: {
     type: String,
-    required: true,
   },
   button: {
     name: {
@@ -24,22 +23,11 @@ const heroSection = new Schema({
       required: true,
     },
   },
-  bgImage: {
-    type: String,
-    required: false,
-  },
-  marqueeList: [
-    {
-      name: {
-        type: String,
-        required: true,
-      },
-    },
-  ],
 });
 
-var heroSchema = new Schema({
-  heroSectionData: heroSection,
+var abouttopAsSchema = new Schema({
+    abouttopAs: abouttopAs,
 });
 
-module.exports = mongoose.model("Hero", heroSchema);
+module.exports = mongoose.model("abouttopAs", abouttopAsSchema);
+

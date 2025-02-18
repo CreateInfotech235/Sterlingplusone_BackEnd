@@ -8,6 +8,7 @@ exports.createServicesPage = async (req, res) => {
     if (
       !servicesPage ||
       !servicesPage.title ||
+      !servicesPage.bgImage ||
       !servicesPage.subTitle ||
       !servicesPage.button ||
       !servicesPage.button.name ||
@@ -20,6 +21,7 @@ exports.createServicesPage = async (req, res) => {
     const existingServicesPage = await ServicesPage.findOne();
 
     if (existingServicesPage) {
+      console.log(existingServicesPage);
       // Update existing Services Page instead of creating new one
       const updatedServicesPage = await ServicesPage.findByIdAndUpdate(
         existingServicesPage._id,

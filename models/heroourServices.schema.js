@@ -14,7 +14,7 @@ const heroourServicesDetails = new Schema({
     type: String,
     required: true,
   },
-  mainImage: {
+  mainVideo: {
     type: String,
     required: true,
   },

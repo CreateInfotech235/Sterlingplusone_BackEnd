@@ -4,7 +4,7 @@ const Admin = require("../../models/admin.schema");
 exports.createContectUs = async (req, res) => {
   try {
     const contactUsData = req.body;
-    if (!contactUsData.name || !contactUsData.email || !contactUsData.contact || !contactUsData.message) {
+    if (!contactUsData.name || !contactUsData.email || !contactUsData.contact || !contactUsData.message || !contactUsData.bgImage) {
       return res.status(400).json({ message: "All fields are required" });
     }
 

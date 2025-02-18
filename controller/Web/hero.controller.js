@@ -7,7 +7,7 @@ exports.createHeroSection = async (req, res) => {
 
     // Check if heroSectionData exists and has the required fields
     const { heroSectionData } = req.body;
-    if (!heroSectionData || !heroSectionData.title || !heroSectionData.subTitle || !heroSectionData.description || !heroSectionData.button || !heroSectionData.button.name || !heroSectionData.button.link) {
+    if (!heroSectionData || !heroSectionData.bgImage || !heroSectionData.title || !heroSectionData.subTitle || !heroSectionData.description || !heroSectionData.button || !heroSectionData.button.name || !heroSectionData.button.link) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 

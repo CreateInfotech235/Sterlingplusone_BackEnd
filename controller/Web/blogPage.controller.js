@@ -4,8 +4,8 @@ const BlogPage = require('../../models/blogPage.schema');
 exports.createBlogPage = async (req, res) => {
   try {
     const { blogPage } = req.body;
-    
-    if (!blogPage || !blogPage.title || !blogPage.subTitle || !blogPage.button || !blogPage.button.name || !blogPage.button.link) {
+    console.log( "blogPage", blogPage);
+    if (!blogPage || !blogPage.bgImage || !blogPage.title || !blogPage.subTitle || !blogPage.button ) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 

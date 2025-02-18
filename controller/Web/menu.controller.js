@@ -3,9 +3,9 @@ const Menu = require('../../models/menu.schema');
 // Create a new Menu
 exports.createMenu = async (req, res) => {
   try {
-    const { logo, menuList, button } = req.body;
+    const { logo, menuList, button,favicon } = req.body;
     
-    if (!logo || !menuList || !button) {
+    if (!logo || !menuList || !button || !favicon) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
@@ -16,7 +16,7 @@ exports.createMenu = async (req, res) => {
       // Update existing Menu instead of creating new one
       const updatedMenu = await Menu.findByIdAndUpdate(
         existingMenu._id,
-        { logo, menuList, button },
+        { logo, menuList, button, favicon },
         { new: true }
       );
       return res.status(200).json(updatedMenu);
@@ -26,7 +26,8 @@ exports.createMenu = async (req, res) => {
     const menu = new Menu({
       logo,
       menuList,
-      button
+      button,
+      favicon
     });
 
     const savedMenu = await menu.save();
@@ -60,10 +61,10 @@ exports.getMenuById = async (req, res) => {
 // Update Menu
 exports.updateMenu = async (req, res) => {
   try {
-    const { logo, menuList, button } = req.body;
+    const { logo, menuList, button, favicon } = req.body;
     const updatedMenu = await Menu.findByIdAndUpdate(
       req.params.id,
-      { logo, menuList, button },
+      { logo, menuList, button, favicon },
       { new: true }
     );
     if (!updatedMenu) return res.status(404).json({ message: "Menu not found" });

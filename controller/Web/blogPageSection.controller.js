@@ -4,8 +4,7 @@ const BlogPageSection = require('../../models/blogPageSection.schema');
 exports.createBlogPageSection = async (req, res) => {
   try {
     const { blogPageSection } = req.body;
-
-    if (!blogPageSection || !blogPageSection.title || !blogPageSection.subTitle || !blogPageSection.button || !blogPageSection.galleryImage) {
+    if (!blogPageSection || !blogPageSection.Categorytitle || !blogPageSection.gallerytitle || !blogPageSection.galleryImage) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
@@ -14,9 +13,10 @@ exports.createBlogPageSection = async (req, res) => {
 
     if (existingSection) {
       // Update existing Blog Page section instead of creating new one
-      const updatedSection = await BlogPageSection.findByIdAndUpdate(
-        existingSection._id,
-        { blogPageSection },
+      console.log("blogPageSection", blogPageSection);
+      const updatedSection = await BlogPageSection.findOneAndUpdate(
+        {},
+        { blogPageSideSection:blogPageSection },
         { new: true }
       );
       return res.status(200).json(updatedSection);
@@ -38,7 +38,7 @@ exports.createBlogPageSection = async (req, res) => {
 // Get all Blog Page sections
 exports.getBlogPageSections = async (req, res) => {
   try {
-    const sections = await BlogPageSection.find();
+    const sections = await BlogPageSection.findOne();
     res.status(200).json(sections);
   } catch (error) {
     res.status(400).json({ message: error.message });
