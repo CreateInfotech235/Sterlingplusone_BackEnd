@@ -1,4 +1,5 @@
 const ServicesPageSection = require("../../models/servicesPageSection.schema");
+const { uploadImage, checkImageType } = require('./img');
 
 // Create a new Services Page Section
 exports.createServicesPageSection = async (req, res) => {
@@ -26,11 +27,23 @@ exports.createServicesPageSection = async (req, res) => {
     // Check if a Services Page Section already exists
     const existingServicesPageSection = await ServicesPageSection.findOne();
 
-    if (existingServicesPageSection) {
+    const imageTypes = await Promise.all(servicesPageSection.services.map(async (service) => {
+      const isValid = await checkImageType(service.img);
+      return { img: service.img, isValid };
+    }));
+
+    if (imageTypes.some(type => type.isValid === false)) {
+      return res.status(400).json({ message: "Invalid image type" });
+    }
+
+    const nowdatawhiteurl = await Promise.all(servicesPageSection.services.map(async (service) => {
+      return { ...service, img: service.img.startsWith("data:image") ? await checkImageType(service.img) ? await uploadImage(service.img) : service.img : service.img };
+    }));
+      if (existingServicesPageSection) {
       // Update existing Services Page Section instead of creating new one
       const updatedServicesPageSection = await ServicesPageSection.findByIdAndUpdate(
         existingServicesPageSection._id,
-        { servicesPageSection },
+        { servicesPageSection: { ...servicesPageSection, services: nowdatawhiteurl } },
         { new: true }
       );
       return res.status(200).json(updatedServicesPageSection);
@@ -38,7 +51,7 @@ exports.createServicesPageSection = async (req, res) => {
 
     // If no existing Services Page Section, create new one
     const servicesPageSectionData = new ServicesPageSection({
-      servicesPageSection: servicesPageSection,
+      servicesPageSection: { ...servicesPageSection, services: nowdatawhiteurl },
     });
 
     const savedServicesPageSection = await servicesPageSectionData.save();

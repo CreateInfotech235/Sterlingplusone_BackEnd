@@ -1,5 +1,5 @@
 const ServicesPage = require("../../models/servicesPage.schema");
-
+const { uploadImage, checkImageType } = require('./img');
 // Create a new Services Page section
 exports.createServicesPage = async (req, res) => {
   try {
@@ -20,12 +20,20 @@ exports.createServicesPage = async (req, res) => {
     // Check if a Services Page section already exists
     const existingServicesPage = await ServicesPage.findOne();
 
+    const imageType1 = await checkImageType(servicesPage.bgImage);
+
+    if (imageType1 === false) {
+      return res.status(400).json({ message: "Invalid image type" });
+    }
+
+    const nowdatawhiteurl = await uploadImage(servicesPage.bgImage);
+
     if (existingServicesPage) {
       console.log(existingServicesPage);
       // Update existing Services Page instead of creating new one
       const updatedServicesPage = await ServicesPage.findByIdAndUpdate(
         existingServicesPage._id,
-        { servicesPage },
+        { servicesPage: { ...servicesPage, bgImage: nowdatawhiteurl } },
         { new: true }
       );
       return res.status(200).json(updatedServicesPage);
@@ -33,7 +41,7 @@ exports.createServicesPage = async (req, res) => {
 
     // If no existing Services Page, create new one
     const servicesPageData = new ServicesPage({
-      servicesPage: servicesPage,
+      servicesPage: { ...servicesPage, bgImage: nowdatawhiteurl },
     });
 
     const savedServicesPage = await servicesPageData.save();

@@ -1,5 +1,5 @@
 const BlogPage = require('../../models/blogPage.schema');
-
+const { uploadImage, checkImageType } = require('./img');
 // Create a new Blog Page section
 exports.createBlogPage = async (req, res) => {
   try {
@@ -9,6 +9,18 @@ exports.createBlogPage = async (req, res) => {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
+    const imageTypes = await Promise.all([blogPage.bgImage].map(async (bgImage) => {
+      const isValid = await checkImageType(bgImage);
+      return { bgImage, isValid };
+    }));
+
+    if (imageTypes.some(type => type.isValid === false)) {
+      return res.status(400).json({ message: "Invalid image type" });
+    }
+
+    const nowdatawhiteurl = await Promise.all([blogPage.bgImage].map(async (bgImage) => {
+      return bgImage.startsWith("data:image") ? await uploadImage(bgImage) : bgImage;
+    }));
     // Check if a Blog Page section already exists
     const existingBlogPage = await BlogPage.findOne();
 
@@ -16,7 +28,7 @@ exports.createBlogPage = async (req, res) => {
       // Update existing Blog Page instead of creating new one
       const updatedBlogPage = await BlogPage.findByIdAndUpdate(
         existingBlogPage._id,
-        { blogPage },
+        { blogPage: { ...blogPage, bgImage: nowdatawhiteurl[0] } },
         { new: true }
       );
       return res.status(200).json(updatedBlogPage);
@@ -24,7 +36,7 @@ exports.createBlogPage = async (req, res) => {
 
     // If no existing Blog Page, create new one
     const blogPageData = new BlogPage({
-      blogPage: blogPage,
+      blogPage: { ...blogPage, bgImage: nowdatawhiteurl[0] },
     });
 
     const savedBlogPage = await blogPageData.save();

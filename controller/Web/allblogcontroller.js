@@ -1,4 +1,5 @@
 const Allblog = require('../../models/Allblog.schema');
+const { uploadImage, checkImageType, deleteImage } = require('./img');
 
 // Create a new All Blog section
 exports.createAllBlog = async (req, res) => {
@@ -17,10 +18,23 @@ exports.createAllBlog = async (req, res) => {
         }
 
 
+        const imageTypes = await Promise.all([allBlogData.image, allBlogData.subImage].map(async (image) => {
+            const isValid = await checkImageType(image);
+            return { image, isValid };
+        }));
+
+        if (imageTypes.some(type => type.isValid === false)) {
+            return res.status(400).json({ message: "Invalid image type" });
+        }
+
+        const nowdatawhiteurl = await Promise.all([allBlogData.image, allBlogData.subImage].map(async (image) => {
+            return image.startsWith("data:image") ? await uploadImage(image) : image;
+        }));
+
 
         // If no existing All Blog, create new one
         const allBlog = new Allblog({
-            Allblog: allBlogData,
+            Allblog: { ...allBlogData, image: nowdatawhiteurl[0], subImage: nowdatawhiteurl[1] },
         });
 
         const savedAllBlog = await allBlog.save();
@@ -101,9 +115,22 @@ exports.updateAllBlog = async (req, res) => {
             );
         }
 
+        const imageTypes = await Promise.all([allBlogData.image, allBlogData.subImage].map(async (image) => {
+            const isValid = await checkImageType(image);
+            return { image, isValid };
+        }));
+
+        if (imageTypes.some(type => type.isValid === false)) {
+            return res.status(400).json({ message: "Invalid image type" });
+        }
+
+        const nowdatawhiteurl = await Promise.all([allBlogData.image, allBlogData.subImage].map(async (image) => {
+            return image.startsWith("data:image") ? await uploadImage(image) : image;
+        }));
+
         const updatedAllBlog = await Allblog.findByIdAndUpdate(
             req.params.id,
-            { Allblog: allBlogData },
+            { Allblog: { ...allBlogData, image: nowdatawhiteurl[0], subImage: nowdatawhiteurl[1] } },
             { new: true }
         );
         if (!updatedAllBlog) return res.status(404).json({ message: "All Blog section not found" });
@@ -116,6 +143,9 @@ exports.updateAllBlog = async (req, res) => {
 // Delete All Blog section
 exports.deleteAllBlog = async (req, res) => {
     try {
+        const data = await Allblog.findById(req.params.id);
+        deleteImage(data.Allblog.image);
+        deleteImage(data.Allblog.subImage);
         const deletedAllBlog = await Allblog.findByIdAndDelete(req.params.id);
         if (!deletedAllBlog) return res.status(404).json({ message: "All Blog section not found" });
         res.status(200).json({ message: "All Blog section deleted successfully" });

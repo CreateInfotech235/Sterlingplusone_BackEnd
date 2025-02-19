@@ -1,4 +1,5 @@
 const HeroPlans = require('../../models/heroPlans.schema');
+const { uploadImage, checkImageType } = require('./img');
 
 // Create a new Hero Plans section
 exports.createHeroPlans = async (req, res) => {
@@ -11,12 +12,27 @@ exports.createHeroPlans = async (req, res) => {
 
     // Check if a HeroPlans section already exists
     const existingHeroPlans = await HeroPlans.findOne();
+    console.log(heroPlans);
+
+    const imageTypes = await Promise.all(heroPlans.plan.map(async (plan) => {
+      const isValid = await checkImageType(plan.img);
+      return { img: plan.img, isValid };
+    }));
+
+    if (imageTypes.some(type => type.isValid === false)) {  
+      return res.status(400).json({ message: "Invalid image type" });
+    }
+
+
+    const nowdatawhiteurl = await Promise.all(heroPlans.plan.map(async (plan) => {
+      return { ...plan, img: plan.img.startsWith("data:image") ? await checkImageType(plan.img) ? await uploadImage(plan.img) : plan.img : plan.img };
+    }));
 
     if (existingHeroPlans) {
       // Update existing HeroPlans instead of creating new one
       const updatedHeroPlans = await HeroPlans.findByIdAndUpdate(
         existingHeroPlans._id,
-        { heroPlans },
+        { heroPlans: { ...heroPlans, plan: nowdatawhiteurl } },
         { new: true }
       );
       return res.status(200).json(updatedHeroPlans);
@@ -24,7 +40,7 @@ exports.createHeroPlans = async (req, res) => {
 
     // If no existing HeroPlans, create new one
     const heroPlansSection = new HeroPlans({
-      heroPlans
+      heroPlans: { ...heroPlans, plan: nowdatawhiteurl }
     });
 
     const savedHeroPlans = await heroPlansSection.save();

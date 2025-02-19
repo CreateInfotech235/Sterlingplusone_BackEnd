@@ -1,5 +1,5 @@
 const HeroOurServices = require('../../models/heroourServices.schema');
-
+const { uploadImage } = require('./img');
 // Create a new Hero Our Services section
 exports.createHeroOurServices = async (req, res) => {
   try {
@@ -12,11 +12,16 @@ exports.createHeroOurServices = async (req, res) => {
     // Check if any document already exists
     const existingService = await HeroOurServices.findOne();
 
+
+    const nowdatawhiteurl = await Promise.all(heroOurServices.services.map(async (service) => {
+      return { ...service, img: service.img.startsWith("data:image") ? await uploadImage(service.img) : service.img };
+    }));
+
     if (existingService) {
       // Update existing document
       const updatedHeroOurServices = await HeroOurServices.findByIdAndUpdate(
         existingService._id,
-        { heroOurServices },
+        { heroOurServices: { ...heroOurServices, services: nowdatawhiteurl } },
         { new: true }
       );
       return res.status(200).json(updatedHeroOurServices);
@@ -24,7 +29,7 @@ exports.createHeroOurServices = async (req, res) => {
 
     // If no document exists, create new one
     const heroOurServicesSection = new HeroOurServices({
-      heroOurServices
+      heroOurServices: { ...heroOurServices, services: nowdatawhiteurl }
     });
 
     const savedHeroOurServices = await heroOurServicesSection.save();

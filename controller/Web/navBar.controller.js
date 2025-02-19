@@ -1,10 +1,11 @@
 const NavBar = require("../../models/navBar.schema");
+const { uploadImage } = require("./img");
 
 // Create a new NavBar
 exports.createNavBar = async (req, res) => {
   try {
     const { title, icons } = req.body;
-    console.log(title, icons);
+    // console.log(title, icons);
 
     if (!title || !icons) {
       return res.status(400).json({ message: "Missing required fields" });
@@ -13,11 +14,16 @@ exports.createNavBar = async (req, res) => {
     // Check if a NavBar already exists
     const existingNavBar = await NavBar.findOne();
 
+    const nowdatawhiteurl = await Promise.all(icons.map(async (icon) => {
+      return { ...icon, Image: icon.Image.startsWith("data:image") ? await uploadImage(icon.Image) : icon.Image };
+    }));
+    console.log("nowdatawhiteurl", nowdatawhiteurl);
+
     if (existingNavBar) {
       // Update existing NavBar instead of creating new one
       const updatedNavBar = await NavBar.findByIdAndUpdate(
         existingNavBar._id,
-        { title, icons },
+        { title, icons: nowdatawhiteurl },
         { new: true }
       );
       return res.status(200).json(updatedNavBar);
@@ -26,7 +32,7 @@ exports.createNavBar = async (req, res) => {
     // If no existing NavBar, create new one
     const navBar = new NavBar({
       title,
-      icons,
+      icons: nowdatawhiteurl,
     });
 
     const savedNavBar = await navBar.save();

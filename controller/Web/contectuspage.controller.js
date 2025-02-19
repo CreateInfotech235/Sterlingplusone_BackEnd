@@ -1,5 +1,5 @@
 const Contact = require("../../models/contect.schems");
-
+const { uploadImage, checkImageType } = require('./img');
 // Create contact page section
 exports.createContactPage = async (req, res) => {
   try {
@@ -12,11 +12,44 @@ exports.createContactPage = async (req, res) => {
     // Check if contact page already exists
     const existingContact = await Contact.findOne();
 
+    // Validate bgImage and icon
+    const imageTypes = await Promise.all([contactPage.bgImage, contactPage.image].map(async (bgImage) => {
+      const isValid = await checkImageType(bgImage);
+      return { bgImage, isValid };
+    }));
+
+    const iconTypes = await Promise.all(contactPage.box.map(async (boxItem) => {
+      const isValid = await checkImageType(boxItem.icon);
+      return { icon: boxItem.icon, isValid };
+    }));
+
+    // Check if any bgImage or icon is invalid
+    const invalidImages = imageTypes.filter(image => !image.isValid);
+    const invalidIcons = iconTypes.filter(icon => !icon.isValid);
+
+    if (invalidImages.length > 0 || invalidIcons.length > 0) {
+      return res.status(400).json({
+        message: "Invalid image types",
+        invalidImages,
+        invalidIcons
+      });
+    }
+
+
+
+    const nowdatawhiteurl = await Promise.all([contactPage.bgImage, contactPage.image].map(async (bgImage) => {
+      return bgImage.startsWith("data:image") ? await uploadImage(bgImage) : bgImage;
+    }));
+
+    const nowdatawhiteurlicon = await Promise.all(contactPage.box.map(async (boxItem) => {
+      return{ ...boxItem, icon: boxItem.icon.startsWith("data:image") ? await uploadImage(boxItem.icon) : boxItem.icon};
+    }));
+
     if (existingContact) {
       // Update existing contact page
       const updatedContact = await Contact.findByIdAndUpdate(
         existingContact._id,
-        { contactPage },
+        { contactPage: { ...contactPage, bgImage: nowdatawhiteurl[0], image: nowdatawhiteurl[1], box: nowdatawhiteurlicon } },
         { new: true }
       );
       return res.status(200).json(updatedContact);
@@ -24,7 +57,7 @@ exports.createContactPage = async (req, res) => {
 
     // Create new contact page
     const contact = new Contact({
-      contactPage
+      contactPage: { ...contactPage, bgImage: nowdatawhiteurl[0], image: nowdatawhiteurl[1], box: nowdatawhiteurlicon }
     });
 
     const savedContact = await contact.save();

@@ -1,6 +1,7 @@
 const ContactUsModel = require("../../models/contectUs.schema");
 const nodemailer = require('nodemailer');
 const Admin = require("../../models/admin.schema");
+
 exports.createContectUs = async (req, res) => {
   try {
     const contactUsData = req.body;

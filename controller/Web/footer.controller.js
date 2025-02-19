@@ -1,4 +1,5 @@
 const Footer = require('../../models/footer.schema');
+const { uploadImage } = require('./img');
 
 // Create or Update Footer
 exports.createOrUpdateFooter = async (req, res) => {
@@ -10,10 +11,15 @@ exports.createOrUpdateFooter = async (req, res) => {
       return res.status(400).json({ message: "Missing required fields: 'section', 'socialMedia', or 'copyright'." });
     }
 
+
+    const nowdatawhiteurl = await Promise.all(footer.socialMedia.map(async (social) => {
+      return { ...social, icon: social.icon.startsWith("data:image") ? await uploadImage(social.icon) : social.icon };
+    }));
+
     // Upsert Footer
     const updatedFooter = await Footer.findOneAndUpdate(
       {},
-      { footer },
+      { footer: { ...footer, socialMedia: nowdatawhiteurl } },
       { new: true, upsert: true } // Upsert option creates a new document if none exists
     );
 

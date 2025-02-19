@@ -1,4 +1,5 @@
 const Menu = require('../../models/menu.schema');
+const { uploadImage } = require('./img');
 
 // Create a new Menu
 exports.createMenu = async (req, res) => {
@@ -10,13 +11,16 @@ exports.createMenu = async (req, res) => {
     }
 
     // Check if a Menu already exists
-    const existingMenu = await Menu.findOne();
+    const existingMenu = await Menu.findOne();    
+  
+    const logoImageUrl = await uploadImage(logo.img);
+    console.log(logoImageUrl);
 
     if (existingMenu) {
       // Update existing Menu instead of creating new one
       const updatedMenu = await Menu.findByIdAndUpdate(
         existingMenu._id,
-        { logo, menuList, button, favicon },
+        { logo: {...logo,img:logoImageUrl}, menuList, button, favicon },
         { new: true }
       );
       return res.status(200).json(updatedMenu);
@@ -24,7 +28,7 @@ exports.createMenu = async (req, res) => {
 
     // If no existing Menu, create new one
     const menu = new Menu({
-      logo,
+      logo: {...logo,img:logoImageUrl} ,
       menuList,
       button,
       favicon

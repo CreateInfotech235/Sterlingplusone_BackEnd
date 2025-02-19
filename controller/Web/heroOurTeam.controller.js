@@ -1,4 +1,5 @@
 const HeroOurTeam = require("../../models/heroOurTeam.schema");
+const { uploadImage, checkImageType } = require('./img');
 
 // Create a new HeroOurTeam
 exports.createHeroOurTeam = async (req, res) => {
@@ -13,6 +14,19 @@ exports.createHeroOurTeam = async (req, res) => {
     // Check if a HeroOurTeam already exists
     const existingHeroOurTeam = await HeroOurTeam.findOne({});
 
+    const imageTypes = await Promise.all(data.teamMember.map(async (member) => {
+      const isValid = await checkImageType(member.img);
+      return { img: member.img, isValid };
+    }));
+
+    if (imageTypes.some(type => type.isValid === false)) {
+      return res.status(400).json({ message: "Invalid image type" });
+    }
+
+    const nowdatawhiteurl = await Promise.all(data.teamMember.map(async (member) => {
+      return { ...member, img: member.img.startsWith("data:image") ? await checkImageType(member.img) ? await uploadImage(member.img) : member.img : member.img };
+    }));
+
     if (existingHeroOurTeam) {
       // Update existing HeroOurTeam instead of creating new one
       const updatedHeroOurTeam = await HeroOurTeam.findByIdAndUpdate(
@@ -20,7 +34,7 @@ exports.createHeroOurTeam = async (req, res) => {
         { 
           heroOurTeam: {
             maintitle:data.maintitle,
-            teamMember:data.teamMember
+            teamMember:nowdatawhiteurl
           }
         },
         { new: true }
@@ -32,7 +46,7 @@ exports.createHeroOurTeam = async (req, res) => {
     const heroOurTeam = new HeroOurTeam({
       heroOurTeam: {
         maintitle:data.maintitle,
-        teamMember:data.teamMember
+        teamMember:nowdatawhiteurl
       }
     });
 

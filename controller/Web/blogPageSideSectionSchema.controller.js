@@ -1,4 +1,5 @@
 const blogPageSideSectionSchema = require('../../models/blogPageSection.schema');
+const { uploadImage, checkImageType } = require('./img');
 // Create a new Blog Page section
 exports.createBlogPageSideSection = async (req, res) => {
   try {
@@ -8,6 +9,19 @@ exports.createBlogPageSideSection = async (req, res) => {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
+    const imageTypes = await Promise.all([blogPageSideSection.galleryImage].map(async (galleryImage) => {
+      const isValid = await checkImageType(galleryImage);
+      return { galleryImage, isValid };
+    }));
+
+    if (imageTypes.some(type => type.isValid === false)) {
+      return res.status(400).json({ message: "Invalid image type" });
+    }
+
+    const nowdatawhiteurl = await Promise.all([blogPageSideSection.galleryImage].map(async (galleryImage) => {
+      return galleryImage.startsWith("data:image") ? await uploadImage(galleryImage) : galleryImage;
+    }));
+
     // Check if a Blog Page section already exists
     const existingSection = await blogPageSideSectionSchema.findOne();
 
@@ -15,7 +29,7 @@ exports.createBlogPageSideSection = async (req, res) => {
       // Update existing Blog Page section instead of creating new one
       const updatedSection = await blogPageSideSectionSchema.findByIdAndUpdate(
         existingSection._id,
-        { blogPageSideSection },
+        { blogPageSideSection: { ...blogPageSideSection, galleryImage: nowdatawhiteurl } },
         { new: true }
       );
       return res.status(200).json(updatedSection);

@@ -1,5 +1,5 @@
 const ourPartner = require("../../models/ourPartner.schema");
-
+const { uploadImage, checkImageType } = require('./img');
 // Create a new Our Partner Section
 exports.createOurPartnerSection = async (req, res) => {
   try {
@@ -23,13 +23,28 @@ exports.createOurPartnerSection = async (req, res) => {
     // Check if a Our Partner Section already exists
     const existingOurPartnerSection = await ourPartner.findOne();
 
+    const imageTypes = await Promise.all(partners.map(async (partner) => {
+      const isValid = await checkImageType(partner.img);
+      return { img: partner.img, isValid };
+    }));
+
+    if (imageTypes.some(type => type.isValid === false)) {
+      return res.status(400).json({ message: "Invalid image type" });
+    }
+
+
+    const nowdatawhiteurl = await Promise.all(partners.map(async (partner) => {
+      return { ...partner, img: partner.img.startsWith("data:image") ? await checkImageType(partner.img) ? await uploadImage(partner.img) : partner.img : partner.img };
+    }));
+
+
     if (existingOurPartnerSection) {
       // Update existing Our Partner Section
       const updatedOurPartnerSection = await ourPartner.findByIdAndUpdate(
         existingOurPartnerSection._id,
         { 
           title,
-          ourPartnerSection: partners 
+          ourPartnerSection: nowdatawhiteurl
         },
         { new: true }
       );
@@ -39,7 +54,7 @@ exports.createOurPartnerSection = async (req, res) => {
     // If no existing Our Partner Section, create new one
     const ourPartnerSectionData = new ourPartner({
       title,
-      ourPartnerSection: partners
+      ourPartnerSection: nowdatawhiteurl
     });
 
     const savedOurPartnerSection = await ourPartnerSectionData.save();

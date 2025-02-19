@@ -1,5 +1,6 @@
 const AboutAs = require('../../models/aboutAs.schema');
 const AbouttopAs = require('../../models/abouttopAs.schema');
+const { uploadImage, checkImageType } = require('./img');
 // Create a new About Us section
 exports.createAboutAs = async (req, res) => {
   try {
@@ -11,19 +12,31 @@ exports.createAboutAs = async (req, res) => {
 
     // Check if an About Us section already exists
     const existingAboutAs = await AboutAs.findOne();
+    const imageTypes = await Promise.all([aboutAs.image].map(async (image) => {
+      const isValid = await checkImageType(image);
+      return { image, isValid };
+    }));
+
+    if (imageTypes.some(type => type.isValid === false)) {
+      return res.status(400).json({ message: "Invalid image type" });
+    }
+
+    const nowdatawhiteurl = await Promise.all([aboutAs.image].map(async (image) => {
+      return image.startsWith("data:image") ? await uploadImage(image) : image;
+    }));
 
     if (existingAboutAs) {
       // Update existing About Us section instead of creating new one
       const updatedAboutAs = await AboutAs.findByIdAndUpdate(
         existingAboutAs._id,
-        { aboutAs },
+        { aboutAs: { ...aboutAs, image: nowdatawhiteurl[0] } },
         { new: true }
       );
       return res.status(200).json(updatedAboutAs);
     }
 
     // If no existing About Us section, create new one
-    const aboutAsData = new AboutAs({ aboutAs });
+    const aboutAsData = new AboutAs({ aboutAs: { ...aboutAs, image: nowdatawhiteurl[0] } });
     const savedAboutAs = await aboutAsData.save();
     res.status(201).json(savedAboutAs);
   } catch (error) {
@@ -103,6 +116,19 @@ exports.createAbouttopAs = async (req, res) => {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
+    const imageTypes = await Promise.all([abouttopAs.bgImage].map(async (bgImage) => {
+      const isValid = await checkImageType(bgImage);
+      return { bgImage, isValid };
+    }));
+
+    if (imageTypes.some(type => type.isValid === false)) {
+      return res.status(400).json({ message: "Invalid image type" });
+    }
+
+    const nowdatawhiteurl = await Promise.all([abouttopAs.bgImage].map(async (bgImage) => {
+      return bgImage.startsWith("data:image") ? await uploadImage(bgImage) : bgImage;
+    }));
+
     // Check if a Services Page section already exists
     const existingAbouttopAs = await AbouttopAs.findOne();
 
@@ -111,7 +137,7 @@ exports.createAbouttopAs = async (req, res) => {
       // Update existing Services Page instead of creating new one
       const updatedAbouttopAs = await AbouttopAs.findByIdAndUpdate(
         existingAbouttopAs._id,
-        { abouttopAs },
+        { abouttopAs: { ...abouttopAs, bgImage: nowdatawhiteurl[0] } },
         { new: true }
       );
       return res.status(200).json(updatedAbouttopAs);
@@ -119,7 +145,7 @@ exports.createAbouttopAs = async (req, res) => {
 
     // If no existing Services Page, create new one
     const abouttopAsData = new AbouttopAs({
-      abouttopAs: abouttopAs,
+      abouttopAs: { ...abouttopAs, bgImage: nowdatawhiteurl[0] },
     });
 
     const savedAbouttopAs = await abouttopAsData.save();
